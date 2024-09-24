@@ -1,0 +1,26 @@
+ <table>
+        <thead>
+            <tr>
+                <td>Id</td>
+                <td>Name</td>
+                <td>Email</td>
+                <td>Phone</td>
+                <td>Location</td>
+                <td>Edit</td>
+                <td>Delete</td>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each data}}
+            <tr>
+                <td>{{this.id}}</td>
+                <td>{{this.name}}</td>
+                <td>{{this.email}}</td>
+                <td>{{this.phone}}</td>
+                <td>{{this.location}}</td>
+                <td><button onclick="edit({{this.id}})">Edit</button></td>
+                <td><button onclick="deleteRecord({{this.id}})">Delete</button></td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
