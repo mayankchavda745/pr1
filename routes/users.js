@@ -2,9 +2,10 @@ var express = require('express');
 var router = express.Router();
 var fs = require('fs');
 var path = require('path');
+const { checkAuth } = require('../logic/middleware');
 
 /* GET users listing. */
-router.post('/insert', function (req, res, next) {
+router.post('/insert',checkAuth, function (req, res, next) {
   try {
     var fp = path.join(__dirname, '../data/rawData.json');
     let data = fs.readFileSync(fp, 'utf-8');
@@ -38,7 +39,7 @@ router.post('/insert', function (req, res, next) {
   }
 });
 
-router.put('/update',(req,res)=>{
+router.put('/update',checkAuth,(req,res)=>{
   try {
     var fp = path.join(__dirname, '../data/rawData.json');
     let data = fs.readFileSync(fp, 'utf-8');
@@ -59,7 +60,7 @@ router.put('/update',(req,res)=>{
   }
 });
 
-router.delete('/remove/:id',(req,res)=>{
+router.delete('/remove/:id',checkAuth,(req,res)=>{
   try {
     var fp = path.join(__dirname, '../data/rawData.json');
     let data = fs.readFileSync(fp, 'utf-8');
@@ -105,5 +106,6 @@ router.post('/login',(req,res)=>{
     res.status(400).send({ error: error.message });
   }
 });
+
 
 module.exports = router;
