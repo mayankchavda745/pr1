@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat</title>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const socket = io();
+
+      // Display username
+      const username = '{{username}}';
+      document.getElementById('username').textContent = username;
+
+      // Handle chat history
+      socket.on('chat history', (messages) => {
+        console.log('inside chat history',messages);
+        const messagesDiv = document.getElementById('messages');
+        messages.forEach((msg) => {
+          const messageElement = document.createElement('div');
+          messageElement.textContent = `${msg.username}: ${msg.message}`;
+          messagesDiv.appendChild(messageElement);
+        });
+      });
+
+      // Handle new message submission
+      document.getElementById('chatForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const messageInput = document.getElementById('messageInput');
+        const message = messageInput.value;
+        socket.emit('new message', { username, message });
+        messageInput.value = '';
+      });
+
+      // Handle receiving a new message
+      socket.on('new message', (msg) => {
+        const messagesDiv = document.getElementById('messages');
+        const messageElement = document.createElement('div');
+        messageElement.textContent = `${msg.username}: ${msg.message}`;
+        messagesDiv.appendChild(messageElement);
+      });
+    });
+  </script>
+</head>
+<body>
+  <h1>Welcome to the Chat, <span id="username"></span></h1>
+
+  <div id="messages">
+    {{#each messages}}
+      <div>{{this.username}}: {{this.message}}</div>
+    {{/each}}
+  </div>
+
+  <form id="chatForm">
+    <input id="messageInput" type="text" placeholder="Type a message..." required>
+    <button type="submit">Send</button>
+  </form>
+</body>
+</html>

@@ -3,6 +3,7 @@ var router = express.Router();
 var fs = require('fs');
 var path = require('path');
 const { checkAuth } = require('../logic/middleware');
+var { messages }  = require('../bin/www');
 
 
 /* GET home page. */
@@ -13,6 +14,15 @@ router.get('/', checkAuth,function(req, res, next) {
     req.session.views=1;
   }
   res.render('count',{count:req.session.views,username:req.session.username});
+});
+
+
+router.get('/chat',checkAuth,function(req,res,next){
+  try {
+    res.render('chat',{username:req.session.username,messages:messages});
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 router.get('/view',checkAuth,(req,res)=>{

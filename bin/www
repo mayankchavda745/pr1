@@ -7,10 +7,12 @@
 var app = require('../app');
 var debug = require('debug')('myapp:server');
 var http = require('http');
-
+const socketIo = require('socket.io');
 /**
  * Get port from environment and store in Express.
  */
+
+const messages = [];
 
 var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
@@ -20,7 +22,31 @@ app.set('port', port);
  */
 
 var server = http.createServer(app);
+const io = socketIo(server);
 
+
+// Handle Socket.IO connections
+io.on('connection', (socket) => {
+  console.log('A user connected');
+
+  // Send existing messages to new client
+  socket.emit('chat history', messages);
+
+  // Handle receiving a new message
+  socket.on('new message', (data) => {
+    const messageData = { username: data.username, message: data.message };
+    
+    // Add message to array
+    messages.push(messageData);
+
+    // Broadcast message to all clients
+    io.emit('new message', messageData);
+  });
+
+  socket.on('disconnect', () => {
+    console.log('User disconnected');
+  });
+});
 /**
  * Listen on provided port, on all network interfaces.
  */
@@ -88,3 +114,6 @@ function onListening() {
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
 }
+
+
+module.exports = {messages}
